@@ -7,12 +7,14 @@ import numpy as np
 import pygrib
 import pytest
 
+from . import sample_dir
+
 
 def test_internal_value_type_of_runtime_error():
-    grbindx = pygrib.index("../sampledata/gfs.grb", "shortName")
+    grbindx = pygrib.index(sample_dir("gfs.grb"), "shortName")
     with pytest.raises(RuntimeError) as e:
         grbindx.write("nonexistent/path")
-    assert type(e.value.args[0]) is str
+    assert isinstance(e.value.args[0], str)
 
 
 @pytest.mark.parametrize(
@@ -81,7 +83,7 @@ def test_internal_value_type_of_runtime_error():
     ],
 )
 def test_scanning_mode(data_fname, scanning_mode, expected_values):
-    template_path = f"../sampledata/{data_fname}"
+    template_path = sample_dir(data_fname)  # f"../sampledata/{data_fname}"
     with open(template_path, "rb") as f:
         template = f.read()
     scanning_mode_index = 0x6C

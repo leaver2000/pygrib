@@ -1,6 +1,6 @@
-from io import BytesIO, SEEK_CUR
-from pathlib import Path
 import os
+from io import SEEK_CUR, BytesIO
+from pathlib import Path
 
 import pygrib
 import pytest
@@ -91,7 +91,7 @@ def test_open_for_textiowrapper_object():
 
     with pytest.raises(TypeError) as e:
         pygrib.open(f)
-    assert str(e.value) == "expected bytes, _io.TextIOWrapper found"
+    assert str(e.value) == "Expected bytes, got _io.TextIOWrapper"
 
 
 INDICATOR = b"GRIB"
@@ -115,7 +115,11 @@ def reread_end_section_using_raw_file_access(f):
 @pytest.mark.parametrize(
     "preprocess, message_lines_expected, postprocess",
     [
-        (read_indicator, message_lines_expected_for_data_with_4bytes_offset, None,),
+        (
+            read_indicator,
+            message_lines_expected_for_data_with_4bytes_offset,
+            None,
+        ),
         (
             read_indicator_and_seek_to_starting_point,
             message_lines_expected_for_data_with_zero_offset,
@@ -144,6 +148,7 @@ def test_open_for_bufferedreader_object_with_raw_file_reading(
     grbs = pygrib.open(f)
     assert_message_lines(grbs, capsys, message_lines_expected)
     grbs.seek(0)
+
     assert_message_lines(grbs, capsys, message_lines_expected)
     grbs.close()
 
@@ -155,7 +160,11 @@ def test_open_for_bufferedreader_object_with_raw_file_reading(
 @pytest.mark.parametrize(
     "preprocess, message_lines_expected, postprocess",
     [
-        (read_indicator, message_lines_expected_for_data_with_4bytes_offset, None,),
+        (
+            read_indicator,
+            message_lines_expected_for_data_with_4bytes_offset,
+            None,
+        ),
         (
             read_indicator_and_seek_to_starting_point,
             message_lines_expected_for_data_with_zero_offset,
