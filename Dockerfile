@@ -7,7 +7,7 @@ ARG ECCODES=eccodes-2.35.0-Source
 ARG ECCODES_DIR=/usr/include/eccodes
 
 RUN apt update -y \
-    && apt install gcc g++ gfortran perl wget cmake libaec-dev libpng-dev -y \
+    && apt install gcc g++ gfortran perl wget cmake libaec-dev libpng-dev libjpeg-dev libopenjp2-7 -y \
     && apt clean all
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -16,7 +16,7 @@ RUN wget -c --progress=dot:giga \
 
 WORKDIR /tmp/build
 SHELL ["/bin/bash", "-c" ]
-RUN cmake -DCMAKE_INSTALL_PREFIX="${ECCODES_DIR}" -DENABLE_PNG=ON .. \
+RUN cmake -DCMAKE_INSTALL_PREFIX="${ECCODES_DIR}" -DENABLE_PNG=ON -DENABLE_JPG=ON .. \
     && make -j"$(nproc)" \
     && make install
 
@@ -29,7 +29,7 @@ WORKDIR /tmp
 ENV ECCODES_DIR=/usr/include/eccodes
 COPY --from=compiler --chown=1001:0 /usr/include/eccodes /usr/include/eccodes
 RUN apt update -y \
-    && apt install libaec-dev libpng-dev -y \
+    && apt install libaec-dev libpng-dev libjpeg-dev -y \
     && apt clean all
 
 RUN python3 -m venv /opt/venv
@@ -37,7 +37,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . .
 RUN pip install wheel \
-    && pip install . --no-cache-dir && python -c "import pygrib"
+    && pip install ".[test]" --no-cache-dir && python -c "import pygrib"
 USER 1001
 
 
@@ -48,7 +48,7 @@ WORKDIR /tmp
 ENV ECCODES_DIR=/usr/include/eccodes
 COPY --from=compiler --chown=1001:0 /usr/include/eccodes /usr/include/eccodes
 RUN apt update -y \
-    && apt install libaec-dev libpng-dev -y \
+    && apt install libaec-dev libpng-dev libjpeg-dev -y \
     && apt clean all
 
 RUN python3 -m venv /opt/venv
@@ -56,8 +56,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . .
 RUN pip install wheel \
-    && pip install . --no-cache-dir && python -c "import pygrib"
-
+    && pip install ".[test]" --no-cache-dir && python -c "import pygrib"
+    
 USER 1001
 
 FROM python:3.12 AS py312
@@ -75,6 +75,6 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . .
 RUN pip install wheel \
-    && pip install . --no-cache-dir && python -c "import pygrib"
+    && pip install ".[test]" --no-cache-dir && python -c "import pygrib"
 
 USER 1001

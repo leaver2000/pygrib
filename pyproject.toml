@@ -35,6 +35,9 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+test = ["pytest","pytest-mpl", "matplotlib", "cartopy"]
+
 [project.urls]
 Documentation = "https://jswhit.github.io/pygrib/"
 Repository = "https://github.com/jswhit/pygrib"
