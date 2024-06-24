@@ -8,3 +8,5 @@ test/out.grib
 venv/
 .eggs/
 .idea/
+.vscode/
+.venv/
